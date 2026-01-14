@@ -60,6 +60,8 @@ vector<string> GetNextValues(vector<TreapNode*> nodes)
 
 string WriteTreap(Treap* treap)
 {
+    int length = 2;
+
     TreapNode* root = treap->GetRoot();
     if (!root)
     {
@@ -90,9 +92,9 @@ string WriteTreap(Treap* treap)
     for (int i = 0; i < values.size(); i++)
     {
         int size = values[values.size() - 1].size();
-        int indent = pow(2, values.size() - i);
+        int indent = pow(2, values.size() - i + 1);
         for (int j = 0; j < values[i].size(); j++)
-        {
+        {        
             if (j == 0)
             {
                 for (int time = 1; time < indent / 2; time++)
@@ -101,7 +103,7 @@ string WriteTreap(Treap* treap)
                 }
             }
             result += values[i][j];
-            for (int time = 0; time < indent; time++)
+            for (int time = 0; time < indent - values[i][j].length(); time++)
             {
                 result += " ";
             }

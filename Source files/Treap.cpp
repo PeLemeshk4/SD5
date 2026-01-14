@@ -25,14 +25,16 @@ TreapNode* Treap::Merge(TreapNode* left, TreapNode* right)
     if (!left) return right;
     if (!right) return left;
 
-    if (left->GetPriority() < right->GetPriority())
+    if (left->GetPriority() <= right->GetPriority())
     {
         left->SetRight(Merge(left->GetRight(), right));
+
         return left;
     }
     else
     {
         right->SetLeft(Merge(left, right->GetLeft()));
+
         return right;
     }
 }
@@ -76,16 +78,28 @@ int Treap::FindElement(int key)
 }
 
 TreapNode* Treap::InsertUnoptimized(int key, int priority)
-{
-    TreapNode* newNode = new TreapNode(key, priority);
-    TreapNode* left = nullptr;
-    TreapNode* right = nullptr;
+{   
+    if (_root)
+    {
+        TreapNode* left = nullptr;
+        TreapNode* right = nullptr;
+        Split(_root, key, left, right);
+        TreapNode* newNode = nullptr;
+        if (right && (right->GetKey() == key && right->GetPriority() == priority))
+        {
+            return nullptr;
+        }
+        newNode = new TreapNode(key, priority);
+        right = Merge(newNode, right);
+        _root = Merge(left, right);
 
-    Split(_root, key, left, right);
-    TreapNode* temp = Merge(left, newNode);
-    _root = Merge(temp, right);
-
-    return newNode;
+        return newNode;
+    }
+    else
+    {
+        _root = new TreapNode(key, priority);
+        return _root;
+    }   
 }
 
 TreapNode* Treap::InsertOptimized(TreapNode* node, int key, int priority)
@@ -93,6 +107,11 @@ TreapNode* Treap::InsertOptimized(TreapNode* node, int key, int priority)
     if (!node)
     {
         return new TreapNode(key, priority);
+    }
+
+    if (node->GetKey() == key && node->GetPriority() == priority)
+    {
+        return node;
     }
 
     if (priority < node->GetPriority())
